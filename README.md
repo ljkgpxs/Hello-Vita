@@ -8,9 +8,9 @@ requisites:
 - [libvita2d](https://github.com/xerpi/libvita2d)
 
 ##Usage
-Up : Set CPU Clock + 1
-Down : Set CPU Clock - 1
-L : Circle's raid - 10
-R : Circle's raid + 10
-Start : Quit program
+Up : Set CPU Clock + 1 <br />
+Down : Set CPU Clock - 1 <br />
+L : Circle's raid - 10 <br />
+R : Circle's raid + 10 <br />
+Start : Quit program <br />
 
