@@ -13,4 +13,4 @@ Down : Set CPU Clock - 1 <br />
 L : Circle's raid - 10 <br />
 R : Circle's raid + 10 <br />
 Start : Quit program <br />
-
+Front Touch : Set Circle's position <br />
