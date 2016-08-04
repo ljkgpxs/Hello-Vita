@@ -14,7 +14,7 @@ CXXFLAGS	+= -std=c++11
 
 LIBS 	= -lSceKernel_stub -lSceDisplay_stub -lSceGxm_stub \
 	-lSceSysmodule_stub -lSceCtrl_stub -lScePgf_stub -lScePower_stub \
-	-lSceCommonDialog_stub -lvita2d -lfreetype -lpng16 \
+	-lSceCommonDialog_stub -lSceTouch_stub -lvita2d -lfreetype -lpng16 \
 	-ljpeg -lz -lm -lc
 
 SRC_C :=$(call rwildcard, src/, *.c)
