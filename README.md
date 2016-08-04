@@ -13,4 +13,10 @@ Down : Set CPU Clock - 1 <br />
 L : Circle's raid - 10 <br />
 R : Circle's raid + 10 <br />
 Start : Quit program <br />
-Front Touch : Set Circle's position <br />
+Front touch one point : Set Circle's position <br />
+Front touch two points : Change Circle's radius <br />
+
+##TODO
+fix bug s<br />
+optimize gesture recognition<br />
+and more...<br />

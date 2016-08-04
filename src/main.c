@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <psp2/ctrl.h>
 #include <psp2/display.h>
 #include <psp2/power.h>
@@ -11,7 +12,6 @@
 #define SCREEN_W	960
 #define SCREEN_H	544
 
-#define abs(x)		(x > 0 ? x : -x)
 #define lerp(x, from_max, to_max) ((x*10.0 / (from_max*10.0) * (to_max*10.0)) / 10.0)
 #ifdef __cplusplus
 extern "C" {
@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 	SceCtrlData pad;
 	SceTouchData touch;
 	
-	float radi = 10.0f, fps = 0.0f;
-	int freq = 333, x = SCREEN_W / 2.0, y = SCREEN_H / 2.0;;
+	float radi = 10.0f, lastLen = 0.0f, fps = 0.0f, tmp = 0.0f;
+	int freq = 333, x = SCREEN_W / 2.0, y = SCREEN_H / 2.0, n = 1;
 
 	vita2d_init();
 	vita2d_set_clear_color(RGBA8(0, 0, 0, 255));
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	
 	while(1) {
 		sceCtrlPeekBufferPositive(0, &pad, 1);
-		sceTouchPeek(0, &touch, 1);
+		sceTouchPeek(SCE_TOUCH_PORT_FRONT, &touch, 1);
 
 		if(pad.buttons & SCE_CTRL_START)
 			break;
@@ -48,18 +48,31 @@ int main(int argc, char *argv[])
 		else if(pad.buttons & SCE_CTRL_LTRIGGER) {
 			if(radi > 10.0f)
 				radi -= 10;
-		}
-		else if(pad.buttons & SCE_CTRL_UP) {
-			freq += 1;
+		} else if(pad.buttons & SCE_CTRL_UP) {
+			// cpu clock's range : 41-444
+			freq += freq < 444 ? 1 : 0;
 			scePowerSetArmClockFrequency(freq);
-		}
-		else if(pad.buttons & SCE_CTRL_DOWN) {
+		} else if(pad.buttons & SCE_CTRL_DOWN) {
 			freq -= freq > 41 ? 1 : 0;
 			scePowerSetArmClockFrequency(freq);
 		}
 
-		if(touch.reportNum == 1) {
+		if(touch.reportNum == 2) {
+			// Get gesture to change the circle's radius
+			tmp = (float)sqrt(pow(touch.report[0].x - touch.report[1].x, 2.0) + pow(touch.report[0].y - touch.report[1].y, 2.0));
+			if(n == 1) {
+				lastLen = tmp;
+				n = 0;
+			} else {
+				if(radi + (tmp - lastLen) / 2.0 > 0)
+					radi += (tmp - lastLen) / 2.0;
+				else
+					radi = 0;
+				lastLen = tmp;
+			}
+		} else if(touch.reportNum == 1) {
 			// Front touchscreen is 1920x1088
+			// Get touch point to change circle's position
 			x = lerp(touch.report[0].x, 1920, SCREEN_W);
 			y = lerp(touch.report[0].y, 1088, SCREEN_H);
 		}
@@ -74,7 +87,7 @@ int main(int argc, char *argv[])
 
 		vita2d_draw_fill_circle(x, y, abs(radi), RGBA8(0, 255, 255, 255));
 		vita2d_pgf_draw_textf(pgf, 25, 25, RGBA8(255, 255, 255, 255), 1.0f, \
-			"Program By Ljkgpxs lx:%d ly:%d rx:%d ry:%d", pad.lx, pad.ly, pad.rx, pad.ry);
+			"Program By Ljkgpxs lx:%d ly:%d rx:%d ry:%d  %.1f tstamp:%ld status:%ld", pad.lx, pad.ly, pad.rx, pad.ry, tmp, touch.timeStamp, touch.status);
 		vita2d_pgf_draw_textf(pgf, 25, 45, RGBA8(255, 255, 255, 255), 1.0f, " Current CPU clock:%d Bus Clock:%d GPU clock:%d", \
 			scePowerGetArmClockFrequency(), scePowerGetBusClockFrequency(), scePowerGetGpuClockFrequency());
 		
