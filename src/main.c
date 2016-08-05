@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
 {
 	SceCtrlData pad;
 	SceTouchData touch;
-	
+	SceUInt64 lastTime;
+
 	float radi = 10.0f, lastLen = 0.0f, fps = 0.0f, tmp = 0.0f;
 	int freq = 333, x = SCREEN_W / 2.0, y = SCREEN_H / 2.0, n = 1;
 
@@ -62,20 +63,27 @@ int main(int argc, char *argv[])
 			tmp = (float)sqrt(pow(touch.report[0].x - touch.report[1].x, 2.0) + pow(touch.report[0].y - touch.report[1].y, 2.0));
 			if(n == 1) {
 				lastLen = tmp;
+				lastTime = touch.timeStamp;
 				n = 0;
 			} else {
-				if(radi + (tmp - lastLen) / 2.0 > 0)
-					radi += (tmp - lastLen) / 2.0;
-				else
-					radi = 0;
-				lastLen = tmp;
+				if(touch.timeStamp - lastTime < 100000) {
+					if(radi + (tmp - lastLen) / 2.0 > 0)
+						radi += (tmp - lastLen) / 2.0;
+					else
+						radi = 0;
+					lastLen = tmp;
+					lastTime = touch.timeStamp;
+				} else {
+					lastLen = 0;
+					n = 1;
+				}
 			}
-		} else if(touch.reportNum == 1) {
+		} /* else if(touch.reportNum == 1) {
 			// Front touchscreen is 1920x1088
 			// Get touch point to change circle's position
 			x = lerp(touch.report[0].x, 1920, SCREEN_W);
 			y = lerp(touch.report[0].y, 1088, SCREEN_H);
-		}
+		} */
 
 		vita2d_start_drawing();
 		vita2d_clear_screen();
