@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 			x = lerp((abs(touch.report[0].x + touch.report[1].x) / 2.0), 1920, SCREEN_W);
 			y = lerp((abs(touch.report[0].y + touch.report[1].y) / 2.0), 1088, SCREEN_H);
 			}
-		}
+		} else if(touch.reportNum == 3) break;
 
 		vita2d_start_drawing();
 		vita2d_clear_screen();

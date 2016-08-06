@@ -12,7 +12,7 @@ Up : Set CPU Clock + 1
 Down : Set CPU Clock - 1  
 L : Circle's raid - 10  
 R : Circle's raid + 10  
-Start : Quit program  
+Start or Three points touch : Quit program  
 Front touch two points : Change Circle's radius and position  
   
 ##TODO
