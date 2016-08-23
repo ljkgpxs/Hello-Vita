@@ -20,7 +20,7 @@ LIBS 	= -lSceKernel_stub -lSceDisplay_stub -lSceGxm_stub \
 SRC_C :=$(call rwildcard, src/, *.c)
 SRC_CPP :=$(call rwildcard, src/, *.cpp)
 
-OBJ_DIRS := $(addprefix out/, $(dir $(SRC_C:src/%.c=%.o))) $(addprefix out/, $(dir $(SRC_CPP:src/%.cpp=%.o)))
+OBJ_DIRS := out/
 OBJS := $(addprefix out/, $(SRC_C:src/%.c=%.o)) $(addprefix out/, $(SRC_CPP:src/%.cpp=%.o))
 
 

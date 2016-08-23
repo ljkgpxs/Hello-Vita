@@ -2,12 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#include <psp2/types.h>
 #include <psp2/ctrl.h>
 #include <psp2/display.h>
 #include <psp2/power.h>
 #include <psp2/touch.h>
 #include <psp2/kernel/processmgr.h>
 #include <vita2d.h>
+
+#include "graphics.h"
 
 #define SCREEN_W	960
 #define SCREEN_H	544
@@ -23,11 +27,12 @@ int main(int argc, char *argv[])
 {
 	SceCtrlData pad;
 	SceTouchData touch;
-	SceUInt64 lastTime;
+	SceUInt64 lastTime, frameTime = 0;
 	SceInt64 sampleNum;
 
-	SceFloat radi = 10.0f, lastLen = 0.0f, fps = 0.0f, tmp = 0.0f;
-	SceInt32 freq = 333, x = SCREEN_W / 2.0, y = SCREEN_H / 2.0;
+	SceFloat radi = 10.0f, lastLen = 0.0f, tmp = 0.0f;
+	SceDouble fps = 0.0;
+	SceInt32 freq = 333, x = SCREEN_W / 2.0, y = SCREEN_H / 2.0, frames = 0;
 
 	vita2d_init();
 	vita2d_set_clear_color(RGBA8(0, 0, 0, 255));
@@ -84,6 +89,14 @@ int main(int argc, char *argv[])
 			}
 		} else if(touch.reportNum == 3) break;
 
+		if(frames == 40) {
+			fps = 40.0 / ((touch.timeStamp - frameTime) / 1.0E6);
+			frameTime = touch.timeStamp;
+			frames = 0;
+		} else {
+			frames++;
+		}
+
 		vita2d_start_drawing();
 		vita2d_clear_screen();
 
@@ -98,7 +111,6 @@ int main(int argc, char *argv[])
 		vita2d_pgf_draw_textf(pgf, 25, 45, RGBA8(255, 255, 255, 255), 1.0f, " Current Arm Clock:%d Bus Clock:%d GPU Clock:%d", \
 			scePowerGetArmClockFrequency(), scePowerGetBusClockFrequency(), scePowerGetGpuClockFrequency());
 		
-		sceDisplayGetRefreshRate(&fps);
 		vita2d_pgf_draw_textf(pgf, SCREEN_W - 80, 25, RGBA8(255, 255, 255, 255), 0.7f, "FPS %.2f", fps);
 
 		vita2d_end_drawing();
