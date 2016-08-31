@@ -37,7 +37,7 @@ $(PROJECT).vpk: eboot.bin param.sfo
 	$(PROJECT).vpk
 	
 eboot.bin: $(PROJECT).velf
-	vita-make-fself $(PROJECT).velf eboot.bin
+	vita-make-fself -s $(PROJECT).velf eboot.bin
 
 param.sfo:
 	vita-mksfoex -s TITLE_ID="$(PROJECT_TITLEID)" "$(PROJECT_TITLE)" param.sfo
